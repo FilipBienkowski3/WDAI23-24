@@ -1,0 +1,173 @@
+kontroler w Spring Boot, który pełni rolę pośrednika między klientem (np. Postman, przeglądarka, frontend) a warstwą logiki biznesowej. Kontroler obsługuje żądania HTTP (GET, POST, DELETE, PUT) i zwraca odpowiednie odpowiedzi.
+
+Główne funkcje kontrolera w mikroserwisie:
+Definiowanie endpointów API:
+
+Endpointy to adresy URL, pod które można wysyłać żądania HTTP, np.:
+GET /hello
+POST /create
+DELETE /delete/{id}
+Obsługa żądań HTTP:
+
+Każdy endpoint odpowiada na konkretne typy żądań HTTP:
+@GetMapping — obsługuje żądania GET.
+@PostMapping — obsługuje żądania POST.
+@PutMapping — obsługuje żądania PUT.
+@DeleteMapping — obsługuje żądania DELETE.
+Połączenie z warstwą serwisową:
+
+Kontroler korzysta z warstwy serwisowej (tutaj PersonServiceImpl), aby realizować logikę biznesową, np.:
+Pobieranie listy osób (personService.getPersons()).
+Tworzenie nowej osoby (personService.create()).
+Usuwanie osoby (personService.delete()).
+Tworzenie odpowiedzi:
+
+Kontroler zwraca dane w odpowiednim formacie, np. JSON, za pomocą ResponseEntity lub bezpośrednio obiektów (np. Person).
+Ustawia status HTTP odpowiedzi, np.:
+200 OK dla powodzenia.
+404 Not Found w przypadku błędu (np. brak osoby).
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ta klasa Person pełni rolę encji (entity) w Spring Boot, czyli reprezentuje tabelę w bazie danych w ramach mechanizmu ORM (Object-Relational Mapping). Dzięki temu można mapować obiekty w Javie na rekordy w tabeli bazy danych i odwrotnie.
+
+Rola klasy Person w mikroserwisie:
+Reprezentacja tabeli w bazie danych:
+
+Adnotacja @Entity informuje Springa, że ta klasa jest encją i powinna być odwzorowana na tabelę w bazie danych.
+Każde pole w tej klasie (np. name, surname, job) odpowiada kolumnie w tabeli.
+Zarządzanie unikalnym identyfikatorem:
+
+Pole id:
+Adnotacja @Id oznacza, że jest to klucz główny (primary key) tabeli.
+Adnotacja @GeneratedValue(strategy = GenerationType.AUTO) mówi, że wartości id będą generowane automatycznie (np. przez mechanizm bazy danych).
+Przechowywanie danych:
+
+Obiekty klasy Person reprezentują dane użytkownika, które można:
+Zapisywać w bazie (create).
+Odczytywać z bazy (get).
+Aktualizować (update).
+Usuwać (delete).
+Gettery i settery:
+
+Pozwalają na dostęp do pól klasy i ich modyfikację zgodnie z zasadami enkapsulacji.
+Są wymagane przez Spring Data JPA i Hibernate do poprawnej obsługi encji.
+Konstruktor:
+
+Konstruktor z parametrami (Person(String name, String surname, String job)): Umożliwia tworzenie nowych obiektów z pełnym zestawem danych.
+Domyślny konstruktor (Person()): Jest wymagany przez JPA do poprawnej pracy z encjami.
+
+
+
+
+
+
+
+
+
+
+
+Interfejs PersonsRepository pełni rolę repozytorium (repository) w architekturze Spring Boot. Jest to warstwa, która odpowiada za bezpośrednią interakcję z bazą danych, czyli wykonywanie operacji CRUD (Create, Read, Update, Delete) na encjach takich jak Person.
+
+Rola PersonsRepository w mikroserwisie:
+Abstrakcja nad dostępem do bazy danych:
+
+Dzięki Spring Data JPA interfejs repozytorium pozwala operować na danych w bazie bez konieczności pisania zapytań SQL.
+CrudRepository zapewnia gotowe metody takie jak:
+save() – zapis lub aktualizacja encji.
+findById() – wyszukiwanie encji po kluczu głównym.
+findAll() – pobranie wszystkich rekordów.
+delete() – usuwanie encji.
+Rozszerzanie standardowych funkcji:
+
+Dodane własne metody, takie jak findBySurname(String surname), pozwalają wykonywać wyszukiwania według innych pól encji (tutaj surname).
+Integracja z JPA i Hibernate:
+
+Spring automatycznie generuje implementację metod repozytorium na podstawie konwencji nazewnictwa metod i struktury encji.
+Na przykład:
+findBySurname(String surname) zostanie przekształcone w zapytanie SQL:
+
+SELECT * FROM person WHERE surname = ?;
+Ułatwienie pracy z bazą:
+
+Eliminuje konieczność pisania ręcznych zapytań SQL.
+Wystarczy wywołać metodę repozytorium, np.:
+
+List<Person> people = personsRepository.findAll();
+Adnotacja @Repository:
+
+Informuje Springa, że ten interfejs jest komponentem repozytorium i powinien być zarządzany jako bean w kontenerze Spring.
+
+
+
+
+
+
+
+
+
+pełnią rolę warstwy serwisowej (service layer) w architekturze aplikacji Spring Boot. Ta warstwa działa jako pośrednik pomiędzy warstwą kontrolera (controller) a repozytorium (repository).
+
+Rola i funkcja:
+1. Interfejs PersonService:
+Rola:
+
+Jest to definicja kontraktu dla serwisu.
+Deklaruje metody, które serwis implementuje, takie jak:
+getPersons() – pobranie wszystkich osób.
+getPersonBySurname(String surname) – wyszukanie osoby po nazwisku.
+create(Person person) – utworzenie nowego rekordu.
+getPersonById(int id) – wyszukanie osoby po identyfikatorze.
+Dlaczego interfejs?
+
+Umożliwia łatwą zamianę implementacji serwisu (np. w celach testowych lub w przypadku zmiany logiki biznesowej).
+Promuje luźne powiązania w aplikacji (loose coupling), co ułatwia jej rozwój i utrzymanie.
+2. Klasa PersonServiceImpl:
+Rola:
+
+Implementuje interfejs PersonService.
+Dostarcza rzeczywistą logikę, która wykonuje operacje przy użyciu PersonsRepository.
+Funkcje metody:
+
+getPersons() – Wywołuje metodę findAll() z repozytorium, aby zwrócić wszystkie rekordy.
+getPersonBySurname(String surname) – Korzysta z findBySurname(), aby zwrócić jedną osobę na podstawie nazwiska.
+getPersonById(int id) – Wywołuje metodę findById() z repozytorium, aby znaleźć osobę na podstawie ID.
+create(Person person) – Używa save() z repozytorium, aby zapisać lub zaktualizować rekord w bazie.
+delete(Person person) – Używa delete() z repozytorium, aby usunąć daną osobę.
+Adnotacja @Service:
+
+Informuje Springa, że ta klasa jest serwisem i powinna być zarządzana jako bean w kontenerze Spring.
+Dzięki temu może być wstrzykiwana do kontrolerów za pomocą @Autowired.
+Rola warstwy serwisowej w mikroserwisie:
+Logika biznesowa:
+
+Warstwa serwisowa może implementować dodatkowe reguły biznesowe, np. walidację danych, agregowanie wyników itp.
+Dekouplowanie kontrolera od repozytorium:
+
+Kontroler nie musi bezpośrednio odwoływać się do repozytorium.
+Dzięki temu łatwiej jest zmieniać logikę biznesową bez wpływu na kontroler.
+Testowanie:
+
+Interfejs PersonService ułatwia tworzenie mocków i przeprowadzanie testów jednostkowych warstwy kontrolera lub serwisowej.
+
+
+
+
+
+
+
+
+Rola DemoApplication:
+
+Uruchomienie aplikacji Spring Boot.
+Inicjalizacja przykładowych danych za pomocą CommandLineRunner.
