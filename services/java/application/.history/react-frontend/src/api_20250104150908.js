@@ -1,0 +1,1 @@
+//plik konfiguracji do 
