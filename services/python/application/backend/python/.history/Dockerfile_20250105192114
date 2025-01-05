@@ -1,0 +1,26 @@
+FROM python:3.10-slim
+
+# Ustawienie zmiennych środowiskowych
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib:$LD_LIBRARY_PATH
+
+# Instalacja zależności systemowych
+RUN apt-get update && apt-get install -y \
+    libaio1 \
+    wget \
+    unzip
+
+# Pobranie Oracle Instant Client
+RUN wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.10.0.0.0dbru.zip && \
+    unzip instantclient-basic-linux.x64-21.10.0.0.0dbru.zip -d /usr/lib/oracle/21/client64 && \
+    rm instantclient-basic-linux.x64-21.10.0.0.0dbru.zip && \
+    ln -s /usr/lib/oracle/21/client64/lib/*.so /usr/lib/
+
+# Instalacja zależności Python
+WORKDIR /app
+COPY . /app
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+CMD ["python", "app.py"]

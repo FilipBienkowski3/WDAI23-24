@@ -1,0 +1,33 @@
+# Użycie oficjalnego obrazu Python
+FROM python:3.10-slim
+
+# Ustaw zmienne środowiskowe
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+# Dodanie narzędzi i Oracle Instant Client
+RUN apt-get update && apt-get install -y \
+    libaio1 wget unzip && \
+    wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basic-linuxx64.zip && \
+    unzip instantclient-basic-linuxx64.zip -d /opt/oracle && \
+    rm instantclient-basic-linuxx64.zip && \
+    echo "/opt/oracle/instantclient_21_9" > /etc/ld.so.conf.d/oracle-instantclient.conf && \
+    ldconfig
+
+# Ustawienie zmiennej środowiskowej dla Oracle Instant Client
+ENV LD_LIBRARY_PATH=/opt/oracle/instantclient_21_9:$LD_LIBRARY_PATH
+
+# Utwórz katalog roboczy
+WORKDIR /app
+
+# Skopiuj pliki aplikacji
+COPY . /app
+
+# Zainstaluj zależności
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Otwórz port
+EXPOSE 5000
+
+# Uruchom aplikację
+CMD ["python", "app.py"]

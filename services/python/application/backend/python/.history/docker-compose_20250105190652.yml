@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - FLASK_ENV=development
+    command: >
+      bash -c "sleep 10 && python app.py"
+
+
+  db:
+    image: gvenzl/oracle-xe
+    container_name: oracle_db
+    environment:
+      - ORACLE_PASSWORD=password
+    ports:
+      - "1521:1521"  # Domyślny port dla Oracle
+      - "5500:5500"  # Oracle Application Express (APEX) port
+
+volumes:
+  postgres_data:
