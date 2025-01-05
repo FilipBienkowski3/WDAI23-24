@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import './styles.css';
-import Home from './components/Home'; // Importuj Home.js
+import PersonList from './components/PersonList';
 import AddPerson from './components/AddPerson';
 import UpdatePerson from './components/UpdatePerson';
 import DeletePerson from './components/DeletePerson';
@@ -20,13 +20,13 @@ function App() {
           </ul>
         </nav>
 
-        {/* Routes */}
-        <Routes>
-          <Route path="/" element={<Home />} /> {/* Ustaw Home jako stronę główną */}
-          <Route path="/add" element={<AddPerson />} />
-          <Route path="/update" element={<UpdatePerson />} />
-          <Route path="/delete" element={<DeletePerson />} />
-        </Routes>
+        {/* Switch i trasy */}
+        <Switch>
+          <Route path="/" exact component={PersonList} />
+          <Route path="/add" component={AddPerson} />
+          <Route path="/update" component={UpdatePerson} />
+          <Route path="/delete" component={DeletePerson} />
+        </Switch>
       </div>
     </Router>
   );
