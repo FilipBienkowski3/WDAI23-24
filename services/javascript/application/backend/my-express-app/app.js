@@ -31,7 +31,12 @@ app.use('/person', personRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow frontend from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
 // error handler
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
