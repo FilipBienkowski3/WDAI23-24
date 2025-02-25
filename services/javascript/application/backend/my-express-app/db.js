@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Twój MongoDB connection string z Atlas (upewnij się, że używasz odpowiednich danych)
 const dbUrl = 'mongodb+srv://fbienkowski:tIk6IQL9ovU8dLxI@cluster0.dgnyu.mongodb.net/myapp?retryWrites=true&w=majority';
 
 mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -11,7 +10,6 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     console.error("Error connecting to MongoDB:", error);
   });
 
-// Zdefiniuj schemat Person (jak w Sequelize)
 const personSchema = new mongoose.Schema({
   id: { type: Number, required: true },
   name: { type: String, required: true },

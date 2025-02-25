@@ -1,16 +1,11 @@
+// module.exports = router;
 var express = require('express');
 var router = express.Router();
 var models = require('../db');
-
+// // GET: Pobierz wszystkie osoby
+// //http://localhost:3000/person
 // GET: Pobierz wszystkie osoby
-//http://localhost:3000/person
 router.get('/', async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Max-Age", "1800");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-    res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE");
-  
   try {
     const persons = await models.Person.find({});
     res.json(persons);
@@ -19,18 +14,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-
+// // POST: Dodaj nową osobę
+// //http://localhost:3000/person/create i w body raw json podaje 4 zmienne
+// // {
+// //   "id": 1,
+// //   "name": "Jan",
+// //   "surname": "Kowalski",
+// //   "job": "Programista"
+// // }
 // POST: Dodaj nową osobę
-//http://localhost:3000/person/create i w body raw json podaje 4 zmienne
-// {
-//   "id": 1,
-//   "name": "Jan",
-//   "surname": "Kowalski",
-//   "job": "Programista"
-// }
 router.post('/create', async (req, res) => {
   try {
-    const { id, name, surname, job } = req.body; // Pobierz dane z JSON-a
+    const { id, name, surname, job } = req.body;
     const newPerson = new models.Person({ id, name, surname, job });
     const savedPerson = await newPerson.save();
     res.status(201).json(savedPerson);
@@ -38,38 +33,34 @@ router.post('/create', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+// // PUT: Zaktualizuj osobę po ID
+// //http://localhost:3000/person/update/1 w ciele raw json name surname i job
 
+// //{
+// //   "job": "Senior Developer"
+// // }
 // PUT: Zaktualizuj osobę po ID
-//http://localhost:3000/person/update/1 w ciele raw json name surname i job
-
-//{
-//   "job": "Senior Developer"
-// }
 router.put('/update/:id', async (req, res) => {
-    try {
-      // Zmienne pobieramy z ciała żądania
-      const { name, surname, job } = req.body;
-  
-      // Aktualizujemy dane osoby po id
-      const updatedPerson = await models.Person.findOneAndUpdate(
-        { id: req.params.id },  // szukamy osoby po id z URL
-        { name, surname, job }, // dane do zaktualizowania
-        { new: true }            // zwróć zaktualizowany dokument
-      );
-  
-      if (!updatedPerson) {
-        return res.status(404).json({ message: 'Person not found' });
-      }
-  
-      res.json(updatedPerson); // Zwracamy zaktualizowaną osobę
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  });
-  
+  try {
+    const { name, surname, job } = req.body;
+    const updatedPerson = await models.Person.findOneAndUpdate(
+      { id: req.params.id },
+      { name, surname, job },
+      { new: true }
+    );
 
+    if (!updatedPerson) {
+      return res.status(404).json({ message: 'Person not found' });
+    }
+
+    res.json(updatedPerson);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+// // DELETE: Usuń osobę po ID
+// //http://localhost:3000/person/delete/23
 // DELETE: Usuń osobę po ID
-//http://localhost:3000/person/delete/23
 router.delete('/delete/:id', async (req, res) => {
   try {
     const result = await models.Person.deleteOne({ id: req.params.id });
@@ -83,3 +74,5 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 module.exports = router;
+
+//npm start na frontcie i  backendzie

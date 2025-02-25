@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:3001', // Adres backendu
+  baseURL: 'http://localhost:3000',
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
 // GET wszystkie osoby
@@ -19,4 +22,4 @@ export const deletePerson = (id) => API.delete(`/person/delete/${id}`);
 
 export default API;
 //npm start na forncie
-//PORT=3001 Nna backendzie get dziala listowanie, reszta nie
+//npm start Nna backendzie get dziala listowanie, reszta nie

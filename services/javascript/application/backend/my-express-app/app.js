@@ -1,3 +1,4 @@
+const cors = require('cors');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -11,6 +12,13 @@ var helloRouter = require('./routes/hello');
 var personRouter = require('./routes/person');
 
 var app = express();
+
+// Ustaw CORS przed wszystkimi trasami
+app.use(cors({
+  origin: 'http://localhost:3001', // Frontend działa na porcie 3001
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Dozwolone metody
+  allowedHeaders: ['Content-Type'] // Dozwolone nagłówki
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,12 +39,7 @@ app.use('/person', personRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
-const cors = require('cors');
-app.use(cors({
-  origin: 'http://localhost:3000', // Allow frontend from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']
-}));
+
 // error handler
 app.use(function(err, req, res, next) {
   res.locals.message = err.message;
