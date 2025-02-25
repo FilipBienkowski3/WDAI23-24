@@ -21,7 +21,13 @@ router.get('/', async (req, res) => {
 
 
 // POST: Dodaj nową osobę
-//http://localhost:3000/person/create i w post raw json podaje 4 zmienne
+//http://localhost:3000/person/create i w body raw json podaje 4 zmienne
+// {
+//   "id": 1,
+//   "name": "Jan",
+//   "surname": "Kowalski",
+//   "job": "Programista"
+// }
 router.post('/create', async (req, res) => {
   try {
     const { id, name, surname, job } = req.body; // Pobierz dane z JSON-a
@@ -35,6 +41,10 @@ router.post('/create', async (req, res) => {
 
 // PUT: Zaktualizuj osobę po ID
 //http://localhost:3000/person/update/1 w ciele raw json name surname i job
+
+//{
+//   "job": "Senior Developer"
+// }
 router.put('/update/:id', async (req, res) => {
     try {
       // Zmienne pobieramy z ciała żądania
